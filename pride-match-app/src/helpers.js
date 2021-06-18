@@ -52,6 +52,7 @@ export function renderForumLink(path, title, className) {
     </Nav>
 }
 
+// api helper functions
 export async function sendRegistrationPost(registrationInfo) {
 
     try {
@@ -65,5 +66,38 @@ export async function sendRegistrationPost(registrationInfo) {
         console.log(err) 
         // add proper http error codes
     }
+}
 
+export async function checkGoogleUser(email) {
+    // returns ACCESSTOKEN, and USERID
+    try {
+        const res = await axios.get(
+            `http://localhost:5000/user_exists?email=${email}`,
+            {
+                "email": email
+            }
+        )
+        return res
+
+    } catch (err) {
+        console.log(err) 
+        // add proper http error codes
+    }
+}
+
+export async function getUserId(email) {
+    // returns ACCESSTOKEN, and USERID
+    try {
+        const res = await axios.get(
+            `http://localhost:5000/login}`,
+            {
+                "email": email
+            }
+        )
+        return res
+
+    } catch (err) {
+        console.log(err) 
+        // add proper http error codes
+    }
 }

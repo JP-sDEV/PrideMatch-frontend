@@ -6,7 +6,8 @@ const initialState = {
     name: "",
     email: "",
     profilePicture: "",
-    sessionToken: ""
+    sessionToken: "",
+    userId: ""
 }
 
 const userRegistration = {

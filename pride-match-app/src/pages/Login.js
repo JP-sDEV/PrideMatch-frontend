@@ -5,6 +5,7 @@ import LoginForm from "../components/login/LoginForm";
 import logo from "../assets/PrideMatchLogoCropped.png"
 import login from "../assets/Login.png"
 import  { Redirect } from 'react-router-dom'
+import { loginUser, checkGoogleUser, getUserId } from "../helpers"
 
 // Google Auth
 import {googleProvider, signOutUser} from "../firebase_config/authMethod";
@@ -24,27 +25,38 @@ export class Login extends Component {
         const handleUserLog = async (provider) => {
             if (!(this.props.state.isLoggedIn)) {
                 const res = await socialMediaAuth(provider);
-                this.props.setState({...this.props.state,
-                    isLoggedIn: true,
-                    isRegistered: true,
-                    name: res.displayName,
-                    email: res.email,
-                    profilePicture: res.photoURL,
-                    sessionToken: res.refreshToken
-                })
-                this.props.setUserState({...this.props.userState, completed: true})
-                
-            } else if (this.props.state.isLoggedIn) {
-                await signOutUser
-                this.props.setState({...this.props.state,
-                    isLoggedIn: false,
-                    isRegistered: false,
-                    name: "",
-                    profilePicture: "",
-                    email: ""
-                })
-            }
-            SaveStateToLocal(this.props.state)
+
+                if (checkGoogleUser(res.email)) {
+                    const userIdReq = getUserId(res.email)
+                    this.props.setState({...this.props.state,
+                        isLoggedIn: true,
+                        isRegistered: true,
+                        name: res.displayName,
+                        email: res.email,
+                        profilePicture: res.photoURL,
+                        sessionToken: res.refreshToken,
+                        userId: userIdReq.id
+                    })
+                    this.props.setUserState({...this.props.userState, completed: true})
+                } else if (this.props.state.isLoggedIn) {
+                    await signOutUser
+                    this.props.setState({...this.props.state,
+                        isLoggedIn: false,
+                        isRegistered: false,
+                        name: "",
+                        profilePicture: "",
+                        email: "",
+                        userId: ""
+                    })
+                }
+                SaveStateToLocal(this.props.state)
+                } else {
+                    console.log("user not found") // add notif here
+                }
+
+                // console.log(res)
+                //  password, user herer?
+
         }
         return (
             <div className="App background">
